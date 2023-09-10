@@ -1,11 +1,23 @@
+import { conflictError } from "../errors/conflict.error.js";
+import { notFoundError } from "../errors/not.found.error.js";
+import flightRepository from "../repositories/flight.repository.js";
+
+import passengerRepository from "../repositories/passenger.repository.js";
+
 export async function insertTravel(travel) {
-  const searchPassenger = await passengerService.findPassenger(travel.passengerId);
-  if (!searchPassenger) return res.status(httpStatus.NOT_FOUND).send({ message: "Passenger not found" });
+  const existingPassenger = await passengerRepository.findPassengerById(travel.passengerId);
+  if (!existingPassenger) throw notFoundError("Passenger");
 
-  const searchFlight = await flightService.findFlight(travel.flightId);
-  if (!searchFlight) return res.status(httpStatus.NOT_FOUND).send({ message: "Flight not found" });
+  const existingFlight = await flightRepository.findFlightById(travel.flightId);
+  if (!existingFlight) throw notFoundError("Flight");
 
-  if (searchPassenger === searchFlight) {
-    return res.status(httpStatus.CONFLICT).send({ message: "Origin and destination cannot be the same" });
-  }
+  if (existingPassenger === existingFlight) throw conflictError("Origin and destination");
+
+  return travelRepository.insertTravel(travel);
 }
+
+const travelService = {
+  insertTravel
+};
+
+export default travelService;

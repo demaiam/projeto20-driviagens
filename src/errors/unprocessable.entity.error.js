@@ -1,4 +1,4 @@
-export function notFoundError(resource) {
+export function unprocessableEntityError(resource) {
   return {
       type: "unprocessableEntity", 
       message: `${resource} unprocessable`
