@@ -19,8 +19,15 @@ async function insertFlight(flight) {
   return flightRepository.insertFlight(flight);
 }
 
+async function findFlightsByTerminal(terminal, city) {
+  const searchCity = await findCityByName(city);
+
+  return flightRepository.findFlightsByTerminal(terminal, searchCity.id);
+}
+
 const flightService = {
-  insertFlight
+  insertFlight,
+  findFlightsByTerminal
 };
 
 export default flightService;

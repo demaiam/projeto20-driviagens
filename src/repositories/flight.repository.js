@@ -25,18 +25,10 @@ async function findFlightById(id) {
   return flight.rows[0];
 }
 
-async function findFlightsByOrigin(origin) {
+async function findFlightsByTerminal(terminal, city) {
   const flights = connection.query(`
-    SELECT * FROM flights WHERE origin=$1;`,
-    [origin]
-  );
-  return flights.rows;
-}
-
-async function findFlightsByDestination(destination) {
-  const flights = connection.query(`
-    SELECT * FROM flights WHERE destination=$1;`,
-    [destination]
+    SELECT * FROM flights WHERE $1=$2;`,
+    [terminal, city]
   );
   return flights.rows;
 }
@@ -45,8 +37,7 @@ const flightRepository = {
   insertFlight,
   findFlights,
   findFlightById,
-  findFlightsByOrigin,
-  findFlightsByDestination
+  findFlightsByTerminal
 }
 
 export default flightRepository;

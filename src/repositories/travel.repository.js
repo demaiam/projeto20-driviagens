@@ -12,18 +12,25 @@ async function insertTravel(travel) {
 
 async function findPassengersTravels() {
   const travels = connection.query(`
-    SELECT CONCAT("firstName", " ", "lastName" from passengers AS passenger FROM passengers)
-    JOIN COUNT();`
+    SELECT CONCAT("firstName", ' ', "lastName") AS passenger,
+    SUM("passengerId") AS travels
+    FROM passengers, travels
+    WHERE passengers.id = travels."passengerId"
+    GROUP BY passengers.id;`
   );
   return travels.rows;
 }
 
 async function findTravelsByPassengerName(name) {
   const travels = connection.query(`
-    SELECT CONCAT("firstName", " ", "lastName" AS passenger FROM passengers)
-    JOIN COUNT()
-    ILIKE %$1%;`,
-    [name]
+    SELECT CONCAT("firstName", ' ', "lastName") AS passenger,
+    SUM("passengerId") AS travels
+    FROM passengers, travels
+    WHERE passengers.id = travels."passengerId"
+    AND passengers."firstName" ILIKE '%$1%'
+	  OR passengers."lastName" ILIKE '%$2%'
+    GROUP BY passengers.id;`,
+    [name, name]
   );
   return travels.rows;
 }

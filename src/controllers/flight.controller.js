@@ -24,23 +24,12 @@ export async function findFlights(req, res) {
   }
 }
 
-export async function findFlightsByOrigin(req, res) {
-  const origin = req.query;
+export async function findFlightsByTerminal(req, res) {
+  const terminal = req.query;
+  const city = req.params;
 
   try {
-    const flights = await flightRepository.getFlightsByOrigin(origin);
-
-    res.status(httpStatus.OK).send(flights);
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
-}
-
-export async function findFlightsByDestination(req, res) {
-  const destination = req.query;
-
-  try {
-    const flights = await flightRepository.findFlightsByDestination(destination);
+    const flights = await flightRepository.findFlightsByTerminal(terminal, city);
 
     res.status(httpStatus.OK).send(flights);
   } catch (error) {
