@@ -61,28 +61,3 @@ export const flightService = {
   findFlightsByTerminal,
   findFlightsByDate
 };
-
-/*
-async function findFlights(query) {
-  const q1 = Object.keys(query)[0];
-  const q2 = query[q1];
-  const q3 = Object.keys(query)[1];
-  const q4 = query[q3];
-  const q5 = Object.keys(query)[2];
-  const q6 = query[q5];
-  let flights;
-  if (q1 === undefined) {
-    flights = await flightRepository.findFlights();
-  }
-  else if (q1 === "origin" || q1 === "destination") {
-    flights = await flightService.findFlightsByTerminal(q1, q2);
-  }
-  else if (q1 === "smaller-date" && q3 === "bigger-date") {
-    flights = await flightService.findFlightsByDate(q2, q4);
-  }
-  else if (q1 === "smaller-date" && (q5 === "origin" || "destination")) {
-    flights = await flightService.findFlightsByTerminalAndDate(q2, q4, q5, q6);
-  }
-  return flights;
-}
-*/
