@@ -11,34 +11,32 @@ async function insertTravel(travel) {
 }
 
 async function findPassengersTravels() {
-  const travels = connection.query(`
+  const travels = await connection.query(`
     SELECT CONCAT("firstName", ' ', "lastName") AS passenger,
     SUM("passengerId") AS travels
     FROM passengers, travels
     WHERE passengers.id = travels."passengerId"
     GROUP BY passengers.id;`
   );
+  console.log("resultado " + travels)
   return travels.rows;
 }
 
-async function findTravelsByPassengerName(name) {
-  const travels = connection.query(`
+async function findPassengersTravelsByName(name) {
+  const travels = await connection.query(`
     SELECT CONCAT("firstName", ' ', "lastName") AS passenger,
     SUM("passengerId") AS travels
     FROM passengers, travels
     WHERE passengers.id = travels."passengerId"
-    AND passengers."firstName" ILIKE '%$1%'
-	  OR passengers."lastName" ILIKE '%$2%'
+    AND passengers."firstName" ILIKE '%${name}%'
+	  OR passengers."lastName" ILIKE '%${name}%'
     GROUP BY passengers.id;`,
-    [name, name]
   );
   return travels.rows;
 }
 
-const travelRepository = {
+export const travelRepository = {
   insertTravel,
   findPassengersTravels,
-  findTravelsByPassengerName
+  findPassengersTravelsByName
 }
-
-export default travelRepository;

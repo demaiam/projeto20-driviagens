@@ -11,14 +11,14 @@ async function insertFlight(flight) {
 }
 
 async function findFlights() {
-  const flights = connection.query(`
+  const flights = await connection.query(`
     SELECT * from flights ORDER BY date;`
   );
   return flights.rows;
 }
 
 async function findFlightById(id) {
-  const flight = connection.query(`
+  const flight = await connection.query(`
     SELECT * FROM flights WHERE id=$1;`,
     [id]
   );
@@ -26,18 +26,37 @@ async function findFlightById(id) {
 }
 
 async function findFlightsByTerminal(terminal, city) {
-  const flights = connection.query(`
-    SELECT * FROM flights WHERE $1=$2;`,
-    [terminal, city]
+  const flights = await connection.query(`
+    SELECT * FROM flights WHERE ${terminal}=$1`,
+    [city]
   );
   return flights.rows;
 }
 
-const flightRepository = {
+async function findFlightsByDate(smallerDate, biggerDate) {
+  const flights = await connection.query(`
+    SELECT * FROM flights WHERE date BETWEEN $1 AND $2
+    ORDER BY date;`,
+    [smallerDate, biggerDate]
+  );
+  return flights.rows;
+}
+
+async function findFlightsByTerminalAndDate(terminal, city, smallerDate, biggerDate) {
+  const flights = await connection.query(`
+    SELECT * FROM flights WHERE ${terminal}=$1
+    AND date BETWEEN $2 AND $3
+    ORDER BY date;`,
+    [city, smallerDate, biggerDate]
+  );
+  return flights.rows;
+}
+
+export const flightRepository = {
   insertFlight,
   findFlights,
   findFlightById,
-  findFlightsByTerminal
+  findFlightsByTerminal,
+  findFlightsByDate,
+  findFlightsByTerminalAndDate
 }
-
-export default flightRepository;

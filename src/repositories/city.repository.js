@@ -5,13 +5,14 @@ async function insertCity(city) {
   const { objectColumns, objectValues, paramsOrder } = mapObjectToInsertQuery(city);
 
   return connection.query(`
-    INSERT INTO cities(${objectColumns}) VALUES (${paramsOrder});`,
+    INSERT INTO cities(${objectColumns}) VALUES(${paramsOrder});`,
     [...objectValues]
   );
 }
 
 async function findCityByName(name) {
-  const result = connection.query(`
+  console.log(name)
+  const result = await connection.query(`
     SELECT * FROM cities WHERE name=$1;`,
     [name]
   );
@@ -19,17 +20,15 @@ async function findCityByName(name) {
 }
 
 async function findCityById(id) {
-  const result =  connection.query(`
+  const result = await connection.query(`
     SELECT name FROM cities WHERE id=$1;`,
     [id]
   );
   return result.rows[0];
 }
 
-const cityRepository = {
+export const cityRepository = {
   insertCity,
   findCityByName,
   findCityById
 };
-
-export default cityRepository;

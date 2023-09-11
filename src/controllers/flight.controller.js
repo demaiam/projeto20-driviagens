@@ -1,38 +1,21 @@
-import flightRepository from "../repositories/flight.repository.js";
-import flightService from "../services/flight.service.js";
+import { internalServerError } from "../errors/internal.server.error.js";
+import { flightService } from "../services/flight.service.js";
+import { formatFlight } from "../utils/dates.utils.js";
 import httpStatus from "http-status";
 
 export async function insertFlight(req, res) {
   const flight = req.body;
 
-  try {
-    await flightService.insertFlight(flight);
+  await flightService.insertFlight(flight);
 
-    res.sendStatus(httpStatus.CREATED);
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
+  res.sendStatus(httpStatus.CREATED);
 }
 
 export async function findFlights(req, res) {
-  try {
-    const flights = await flightRepository.getFlights();
+  const query = req.query;
 
-    res.status(httpStatus.OK).send(flights);
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
-}
+  const flights = await flightService.findFlights(query);
+  if (flights.length > 10) throw internalServerError();
 
-export async function findFlightsByTerminal(req, res) {
-  const terminal = req.query;
-  const city = req.params;
-
-  try {
-    const flights = await flightRepository.findFlightsByTerminal(terminal, city);
-
-    res.status(httpStatus.OK).send(flights);
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
+  res.status(httpStatus.OK).send(flights.map((flight) => formatFlight(flight)));
 }

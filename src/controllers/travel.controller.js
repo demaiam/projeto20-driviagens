@@ -1,33 +1,20 @@
-import travelService from "../services/travel.service.js";
-import travelRepository from "../repositories/travel.repository.js";
+import { travelService } from "../services/travel.service.js";
+import { internalServerError } from "../errors/internal.server.error.js";
 import httpStatus from "http-status";
 
 export async function insertTravel(req, res) {
   const travel = req.body;
 
-  try {
-    await travelService.insertTravel({ ...travel });
+  await travelService.insertTravel({ ...travel });
 
-    res.sendStatus(httpStatus.CREATED);
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
+  res.sendStatus(httpStatus.CREATED);
 }
 
 export async function findPassengersTravels(req, res) {
-  try {
-    await travelRepository.findPassengersTravels();
+  const query = req.query;
 
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
-}
+  const travels = await travelService.findPassengersTravels(query);
+  if (travels.length > 10) throw internalServerError();
 
-export async function findTravelsByPassengerName(req, res) {
-  try {
-    await travelRepository.findTravelsByPassengerName();
-
-  } catch (error) {
-    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-  }
+  res.status(httpStatus.OK).send(travels);
 }
